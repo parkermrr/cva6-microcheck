@@ -110,6 +110,8 @@ module csr_regfile import ariane_pkg::*; #(
     // we are in debug
     logic        debug_mode_q, debug_mode_d;
     logic        mtvec_rst_load_q;// used to determine whether we came out of reset
+	//microcheckpoint switch
+	logic		 checkpoint_mode_q, checkpoint_mode_d;
 
     riscv::xlen_t dpc_q,       dpc_d;
     riscv::xlen_t dscratch0_q, dscratch0_d;
@@ -316,6 +318,7 @@ module csr_regfile import ariane_pkg::*; #(
                     else
                         csr_rdata = {10'b0, pmpaddr_q[index][riscv::PLEN-3:1], 1'b0};
                 end
+				riscv::CSR_MICROCHECK_SWAP:	csr_rdata = checkpoint_mode_q;
                 default: read_access_exception = 1'b1;
             endcase
         end
@@ -646,6 +649,7 @@ module csr_regfile import ariane_pkg::*; #(
                         pmpaddr_d[index] = csr_wdata[riscv::PLEN-3:0];
                     end
                 end
+				riscv::CSR_MICROCHECK_SWAP:              checkpoint_mode_d     = csr_wdata;
                 default: update_access_exception = 1'b1;
             endcase
         end
@@ -1174,6 +1178,8 @@ module csr_regfile import ariane_pkg::*; #(
             instret_q              <= instret_d;
             // aux registers
             en_ld_st_translation_q <= en_ld_st_translation_d;
+			// microcheckpointing registers
+			checkpoint_mode_q <= checkpoint_mode_d;
             // wait for interrupt
             wfi_q                  <= wfi_d;
             // pmp
