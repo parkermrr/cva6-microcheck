@@ -649,7 +649,7 @@ module csr_regfile import ariane_pkg::*; #(
                         pmpaddr_d[index] = csr_wdata[riscv::PLEN-3:0];
                     end
                 end
-				        riscv::CSR_MICROCHECK_SWAP: checkpoint_mode_d     = (csr_wdata != 0) ? 1'b1 : 1'b0;;
+				        riscv::CSR_MICROCHECK_SWAP: checkpoint_mode_d     = (csr_wdata != 0) ? 1'b1 : 1'b0;
                 default: update_access_exception = 1'b1;
             endcase
         end
