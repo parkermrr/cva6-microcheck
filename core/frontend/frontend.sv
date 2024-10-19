@@ -168,6 +168,10 @@ module frontend import ariane_pkg::*; #(
       taken_rvi_cf = '0;
       taken_rvc_cf = '0;
       predict_address = '0;
+      
+      if(checkpoint_mode_i != 0) begin
+        $display("CHECKPOINTING SWAP IS ACTIVE\n");
+      end
 
       for (int i = 0; i < INSTR_PER_FETCH; i++)  cf_type[i] = ariane_pkg::NoCF;
 
