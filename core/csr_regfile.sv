@@ -85,7 +85,9 @@ module csr_regfile import ariane_pkg::*; #(
     output logic                  perf_we_o,
     // PMPs
     output riscv::pmpcfg_t [15:0] pmpcfg_o,   // PMP configuration containing pmpcfg for max 16 PMPs
-    output logic [15:0][riscv::PLEN-3:0] pmpaddr_o            // PMP addresses
+    output logic [15:0][riscv::PLEN-3:0] pmpaddr_o,            // PMP addresses
+    //Microcheckpointing
+    output logic checkpoint_mode_o
 );
     // internal signal to keep track of access exceptions
     logic        read_access_exception, update_access_exception, privilege_violation;
@@ -1180,6 +1182,7 @@ module csr_regfile import ariane_pkg::*; #(
             en_ld_st_translation_q <= en_ld_st_translation_d;
       			// microcheckpointing registers
       			checkpoint_mode_q <= checkpoint_mode_d;
+            checkpoint_mode_o <= checkpoint_mode_q;
             // wait for interrupt
             wfi_q                  <= wfi_d;
             // pmp

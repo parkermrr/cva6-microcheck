@@ -37,6 +37,7 @@ module frontend import ariane_pkg::*; #(
   input  logic [riscv::VLEN-1:0] trap_vector_base_i, // base of trap vector
   input  logic               ex_valid_i,         // exception is valid - from commit
   input  logic               set_debug_pc_i,     // jump to debug address
+  input  logic               checkpoint_mode_i, // swap branch predictor state
   // Instruction Fetch
   output icache_dreq_i_t     icache_dreq_o,
   input  icache_dreq_o_t     icache_dreq_i,

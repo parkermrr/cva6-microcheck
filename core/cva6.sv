@@ -202,6 +202,7 @@ module cva6 import ariane_pkg::*; #(
   logic                     single_step_csr_commit;
   riscv::pmpcfg_t [15:0]    pmpcfg;
   logic [15:0][riscv::PLEN-3:0] pmpaddr;
+  logic                     checkpoint_mode;
   // ----------------------------
   // Performance Counters <-> *
   // ----------------------------
@@ -273,6 +274,7 @@ module cva6 import ariane_pkg::*; #(
     .pc_commit_i         ( pc_commit                     ),
     .set_pc_commit_i     ( set_pc_ctrl_pcgen             ),
     .set_debug_pc_i      ( set_debug_pc                  ),
+    .checkpoint_mode_i   ( checkpoint_mode               ),
     .epc_i               ( epc_commit_pcgen              ),
     .eret_i              ( eret                          ),
     .trap_vector_base_i  ( trap_vector_base_commit_pcgen ),
@@ -604,6 +606,7 @@ module cva6 import ariane_pkg::*; #(
     .perf_we_o              ( we_csr_perf                   ),
     .pmpcfg_o               ( pmpcfg                        ),
     .pmpaddr_o              ( pmpaddr                       ),
+    .checkpoint_mode_o      ( checkpoint_mode               ),
     .debug_req_i,
     .ipi_i,
     .irq_i,
