@@ -123,6 +123,13 @@ module frontend import ariane_pkg::*; #(
       .instr_o             ( instr                 )
     );
     // --------------------
+    // Microcheckpointing BP Swap
+    // --------------------
+    bp_resolve_t        resolved_branch_A, resolved_branch_B;
+    bht_prediction_t [INSTR_PER_FETCH-1:0]   bht_prediction_A, bht_prediction_B;
+    btb_prediction_t [INSTR_PER_FETCH-1:0]   btb_prediction_A, btb_prediction_B;
+    
+    // --------------------
     // Branch Prediction
     // --------------------
     // select the right branch prediction result
