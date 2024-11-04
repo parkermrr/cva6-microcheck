@@ -125,9 +125,25 @@ module frontend import ariane_pkg::*; #(
     // --------------------
     // Microcheckpointing BP Swap
     // --------------------
-    bp_resolve_t        resolved_branch_A, resolved_branch_B;
     bht_prediction_t [INSTR_PER_FETCH-1:0]   bht_prediction_A, bht_prediction_B;
     btb_prediction_t [INSTR_PER_FETCH-1:0]   btb_prediction_A, btb_prediction_B;
+    bht_update_t bht_update_A, bht_update_B;
+    btb_update_t btb_update_A, btb_update_B;
+
+    if(checkpoint_mode_i != 0) begin
+      $display("BRANCH PREDICTOR A ACTIVE\n");
+      assign bht_prediction = bht_prediction_B;
+      assign btb_prediction = btb_prediction_B;
+      assign resolved_branch_B = resolved_branch_i;
+      assign bht_update_B = bht_update;
+    end
+    else begin
+      $display("BRANCH PREDICTOR B ACTIVE\n");
+      assign bht_prediction = bht_prediction_A;
+      assign btb_prediction = btb_prediction_A;
+      assign resolved_branch_A = resolved_branch_i;
+      assign bht_update_A = bht_update;
+    end
     
     // --------------------
     // Branch Prediction
@@ -175,10 +191,6 @@ module frontend import ariane_pkg::*; #(
       taken_rvi_cf = '0;
       taken_rvc_cf = '0;
       predict_address = '0;
-      
-      if(checkpoint_mode_i != 0) begin
-        $display("CHECKPOINTING SWAP IS ACTIVE\n");
-      end
 
       for (int i = 0; i < INSTR_PER_FETCH; i++)  cf_type[i] = ariane_pkg::NoCF;
 
@@ -411,26 +423,50 @@ module frontend import ariane_pkg::*; #(
 
     btb #(
       .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
-    ) i_btb (
+    ) btb_A (
       .clk_i,
       .rst_ni,
       .flush_i          ( flush_bp_i       ),
       .debug_mode_i,
       .vpc_i            ( icache_vaddr_q   ),
-      .btb_update_i     ( btb_update       ),
-      .btb_prediction_o ( btb_prediction   )
+      .btb_update_i     ( btb_update_A       ),
+      .btb_prediction_o ( btb_prediction_A   )
     );
 
     bht #(
       .NR_ENTRIES       ( ArianeCfg.BHTEntries   )
-    ) i_bht (
+    ) bht_A (
       .clk_i,
       .rst_ni,
       .flush_i          ( flush_bp_i       ),
       .debug_mode_i,
       .vpc_i            ( icache_vaddr_q   ),
-      .bht_update_i     ( bht_update       ),
-      .bht_prediction_o ( bht_prediction   )
+      .bht_update_i     ( bht_update_A       ),
+      .bht_prediction_o ( bht_prediction_A   )
+    );
+
+    btb #(
+      .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
+    ) btb_B (
+      .clk_i,
+      .rst_ni,
+      .flush_i          ( flush_bp_i       ),
+      .debug_mode_i,
+      .vpc_i            ( icache_vaddr_q   ),
+      .btb_update_i     ( btb_update_B       ),
+      .btb_prediction_o ( btb_prediction_B   )
+    );
+
+    bht #(
+      .NR_ENTRIES       ( ArianeCfg.BHTEntries   )
+    ) bht_B (
+      .clk_i,
+      .rst_ni,
+      .flush_i          ( flush_bp_i       ),
+      .debug_mode_i,
+      .vpc_i            ( icache_vaddr_q   ),
+      .bht_update_i     ( bht_update_B       ),
+      .bht_prediction_o ( bht_prediction_B   )
     );
 
     // we need to inspect up to INSTR_PER_FETCH instructions for branches
