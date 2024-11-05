@@ -11,10 +11,10 @@ module btb_mux #(
     output ariane_pkg::btb_prediction_t [ariane_pkg::INSTR_PER_FETCH-1:0] btb_prediction_o // prediction from btb
 );
 
-    ariane_pkg::btb_prediction_t [INSTR_PER_FETCH-1:0]   btb_prediction_A, btb_prediction_B;
+    ariane_pkg::btb_prediction_t [ariane_pkg::INSTR_PER_FETCH-1:0]   btb_prediction_A, btb_prediction_B;
     ariane_pkg::btb_update_t btb_update_A, btb_update_B;
 
-	ariane_pkg::btb #(
+	btb #(
       .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
     ) btb_A (
       .clk_i,
@@ -26,7 +26,7 @@ module btb_mux #(
       .btb_prediction_o ( btb_prediction_A   )
     );
 
-    ariane_pkg::btb #(
+    btb #(
       .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
     ) btb_B (
       .clk_i,

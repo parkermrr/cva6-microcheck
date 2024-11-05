@@ -12,10 +12,10 @@ module bht_mux #(
     output ariane_pkg::bht_prediction_t [ariane_pkg::INSTR_PER_FETCH-1:0] bht_prediction_o
 );
 
-	ariane_pkg::bht_prediction_t [INSTR_PER_FETCH-1:0]   bht_prediction_A, bht_prediction_B;
+	ariane_pkg::bht_prediction_t [ariane_pkg::INSTR_PER_FETCH-1:0]   bht_prediction_A, bht_prediction_B;
 	ariane_pkg::bht_update_t bht_update_A, bht_update_B;
 
-	ariane_pkg::bht #(
+	bht #(
       .NR_ENTRIES       ( ArianeCfg.BHTEntries   )
     ) bht_A (
       .clk_i,
@@ -27,7 +27,7 @@ module bht_mux #(
       .bht_prediction_o ( bht_prediction_A   )
     );
 
-    ariane_pkg::bht #(
+    bht #(
       .NR_ENTRIES       ( ArianeCfg.BHTEntries   )
     ) bht_B (
       .clk_i,
