@@ -135,14 +135,12 @@ module frontend import ariane_pkg::*; #(
         $display("BRANCH PREDICTOR B ACTIVE\n");
         bht_prediction = bht_prediction_B;
         btb_prediction = btb_prediction_B;
-        resolved_branch_B = resolved_branch_i;
         bht_update_B = bht_update;
       end
       else begin
         $display("BRANCH PREDICTOR A ACTIVE\n");
         bht_prediction = bht_prediction_A;
         btb_prediction = btb_prediction_A;
-        resolved_branch_A = resolved_branch_i;
         bht_update_A = bht_update;
       end
     end
