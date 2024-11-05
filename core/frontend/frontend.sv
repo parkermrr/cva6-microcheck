@@ -122,34 +122,6 @@ module frontend import ariane_pkg::*; #(
       .addr_o              ( addr                  ),
       .instr_o             ( instr                 )
     );
-
-    // Update Control Flow Predictions
-    bht_update_t bht_update;
-    btb_update_t btb_update;
-
-    // --------------------
-    // Microcheckpointing BP Swap
-    // --------------------
-    bht_prediction_t [INSTR_PER_FETCH-1:0]   bht_prediction_A, bht_prediction_B;
-    btb_prediction_t [INSTR_PER_FETCH-1:0]   btb_prediction_A, btb_prediction_B;
-    bht_update_t bht_update_A, bht_update_B;
-    btb_update_t btb_update_A, btb_update_B;
-
-    always_comb begin
-      if(checkpoint_mode_i != 0) begin
-        $display("BRANCH PREDICTOR B ACTIVE\n");
-        bht_prediction = bht_prediction_B;
-        btb_prediction = btb_prediction_B;
-        bht_update_B = bht_update;
-      end
-      else begin
-        $display("BRANCH PREDICTOR A ACTIVE\n");
-        bht_prediction = bht_prediction_A;
-        btb_prediction = btb_prediction_A;
-        bht_update_A = bht_update;
-      end
-    end
-    
     
     // --------------------
     // Branch Prediction
@@ -288,6 +260,10 @@ module frontend import ariane_pkg::*; #(
     // also if we killed the first stage we also need to kill the second stage (inclusive flush)
     assign icache_dreq_o.kill_s2 = icache_dreq_o.kill_s1 | bp_valid;
 
+    // Update Control Flow Predictions
+    bht_update_t bht_update;
+    btb_update_t btb_update;
+
     // assert on branch, deassert when resolved
     logic speculative_q,speculative_d;
     assign speculative_d = (speculative_q && !resolved_branch_i.valid || |is_branch || |is_return || |is_jalr) && !flush_i;
@@ -423,52 +399,30 @@ module frontend import ariane_pkg::*; #(
       .data_o ( ras_predict )
     );
 
-    btb #(
+    btb_mux #(
       .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
-    ) btb_A (
+    ) i_btb_mux (
       .clk_i,
       .rst_ni,
       .flush_i          ( flush_bp_i       ),
       .debug_mode_i,
+      .checkpoint_mode_i,
       .vpc_i            ( icache_vaddr_q   ),
-      .btb_update_i     ( btb_update_A       ),
-      .btb_prediction_o ( btb_prediction_A   )
+      .btb_update_i     ( btb_update       ),
+      .btb_prediction_o ( btb_prediction   )
     );
 
-    bht #(
+    bht_mux #(
       .NR_ENTRIES       ( ArianeCfg.BHTEntries   )
-    ) bht_A (
+    ) i_bht_mux (
       .clk_i,
       .rst_ni,
       .flush_i          ( flush_bp_i       ),
       .debug_mode_i,
+      .checkpoint_mode_i,
       .vpc_i            ( icache_vaddr_q   ),
-      .bht_update_i     ( bht_update_A       ),
-      .bht_prediction_o ( bht_prediction_A   )
-    );
-
-    btb #(
-      .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
-    ) btb_B (
-      .clk_i,
-      .rst_ni,
-      .flush_i          ( flush_bp_i       ),
-      .debug_mode_i,
-      .vpc_i            ( icache_vaddr_q   ),
-      .btb_update_i     ( btb_update_B       ),
-      .btb_prediction_o ( btb_prediction_B   )
-    );
-
-    bht #(
-      .NR_ENTRIES       ( ArianeCfg.BHTEntries   )
-    ) bht_B (
-      .clk_i,
-      .rst_ni,
-      .flush_i          ( flush_bp_i       ),
-      .debug_mode_i,
-      .vpc_i            ( icache_vaddr_q   ),
-      .bht_update_i     ( bht_update_B       ),
-      .bht_prediction_o ( bht_prediction_B   )
+      .bht_update_i     ( bht_update       ),
+      .bht_prediction_o ( bht_prediction   )
     );
 
     // we need to inspect up to INSTR_PER_FETCH instructions for branches
