@@ -15,7 +15,7 @@ module btb_mux #(
     ariane_pkg::btb_update_t btb_update_A, btb_update_B;
 
 	btb #(
-      .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
+      .NR_ENTRIES
     ) btb_A (
       .clk_i,
       .rst_ni,
@@ -27,7 +27,7 @@ module btb_mux #(
     );
 
     btb #(
-      .NR_ENTRIES       ( ArianeCfg.BTBEntries   )
+      .NR_ENTRIES
     ) btb_B (
       .clk_i,
       .rst_ni,
