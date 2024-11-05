@@ -54,6 +54,6 @@ module bht_mux #(
         end
     end
 
-    assign bht_prediction_o = (checkpoint_mode_i) ? btb_prediction_B : btb_prediction_A;
+    assign bht_prediction_o = (checkpoint_mode_i) ? bht_prediction_B : bht_prediction_A;
 
 endmodule
