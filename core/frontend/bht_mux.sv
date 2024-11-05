@@ -16,7 +16,7 @@ module bht_mux #(
 	ariane_pkg::bht_update_t bht_update_A, bht_update_B;
 
 	bht #(
-      .NR_ENTRIES
+      .NR_ENTRIES (NR_ENTRIES)
     ) bht_A (
       .clk_i,
       .rst_ni,
@@ -28,7 +28,7 @@ module bht_mux #(
     );
 
     bht #(
-      .NR_ENTRIES
+      .NR_ENTRIES (NR_ENTRIES)
     ) bht_B (
       .clk_i,
       .rst_ni,
