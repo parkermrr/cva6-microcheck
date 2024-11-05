@@ -130,20 +130,23 @@ module frontend import ariane_pkg::*; #(
     bht_update_t bht_update_A, bht_update_B;
     btb_update_t btb_update_A, btb_update_B;
 
-    if(checkpoint_mode_i != 0) begin
-      $display("BRANCH PREDICTOR A ACTIVE\n");
-      assign bht_prediction = bht_prediction_B;
-      assign btb_prediction = btb_prediction_B;
-      assign resolved_branch_B = resolved_branch_i;
-      assign bht_update_B = bht_update;
+    always_comb begin
+      if(checkpoint_mode_i != 0) begin
+        $display("BRANCH PREDICTOR B ACTIVE\n");
+        bht_prediction = bht_prediction_B;
+        btb_prediction = btb_prediction_B;
+        resolved_branch_B = resolved_branch_i;
+        bht_update_B = bht_update;
+      end
+      else begin
+        $display("BRANCH PREDICTOR A ACTIVE\n");
+        bht_prediction = bht_prediction_A;
+        btb_prediction = btb_prediction_A;
+        resolved_branch_A = resolved_branch_i;
+        bht_update_A = bht_update;
+      end
     end
-    else begin
-      $display("BRANCH PREDICTOR B ACTIVE\n");
-      assign bht_prediction = bht_prediction_A;
-      assign btb_prediction = btb_prediction_A;
-      assign resolved_branch_A = resolved_branch_i;
-      assign bht_update_A = bht_update;
-    end
+    
     
     // --------------------
     // Branch Prediction
