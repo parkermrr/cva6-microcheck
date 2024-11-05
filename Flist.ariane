@@ -68,7 +68,9 @@ core/csr_regfile.sv
 core/decoder.sv
 core/ex_stage.sv
 core/frontend/btb.sv
+core/frontend/btb_mux.sv
 core/frontend/bht.sv
+core/frontend/bht_mux.sv
 core/frontend/ras.sv
 core/frontend/instr_scan.sv
 core/frontend/instr_queue.sv
