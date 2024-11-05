@@ -122,6 +122,11 @@ module frontend import ariane_pkg::*; #(
       .addr_o              ( addr                  ),
       .instr_o             ( instr                 )
     );
+
+    // Update Control Flow Predictions
+    bht_update_t bht_update;
+    btb_update_t btb_update;
+
     // --------------------
     // Microcheckpointing BP Swap
     // --------------------
@@ -282,10 +287,6 @@ module frontend import ariane_pkg::*; #(
     // if we have a valid branch-prediction we need to only kill the last cache request
     // also if we killed the first stage we also need to kill the second stage (inclusive flush)
     assign icache_dreq_o.kill_s2 = icache_dreq_o.kill_s1 | bp_valid;
-
-    // Update Control Flow Predictions
-    bht_update_t bht_update;
-    btb_update_t btb_update;
 
     // assert on branch, deassert when resolved
     logic speculative_q,speculative_d;
